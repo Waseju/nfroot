@@ -88,5 +88,4 @@ for (i=0; i<fileList.length; i++) {
         run("Close All");
     }
 }
-
 run("Quit");

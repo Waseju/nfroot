@@ -60,4 +60,5 @@ class WorkflowNfroot {
         def description_html = engine.createTemplate(methods_text).make(meta)
 
         return description_html
-    }}
+    }
+}
