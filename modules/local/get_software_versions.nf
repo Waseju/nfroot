@@ -3,8 +3,7 @@ include { saveFiles } from './functions'
 
 params.options = [:]
 
-process SAMPLESHEET_CHECK {
-    tag "$samplesheet"
+process GET_SOFTWARE_VERSIONS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:'pipeline_info', meta:[:], publish_by_meta:[]) }
@@ -16,16 +15,19 @@ process SAMPLESHEET_CHECK {
         container "quay.io/biocontainers/python:3.8.3"
     }
 
+    cache false
+
     input:
-    file samplesheet
+    path versions
 
     output:
-    path '*inputs'
+    path "software_versions.tsv"     , emit: tsv
+    path 'software_versions_mqc.yaml', emit: yaml
 
-    script: // This script is bundled with the pipeline, in nf-core/nfroot/bin/
+    script: // This script is bundled with the pipeline, in nf-core/rts/bin/
     """
-    check_samplesheet.py \\
-        $samplesheet \\
-        inputs/
+    echo $workflow.manifest.version > pipeline.version.txt
+    echo $workflow.nextflow.version > nextflow.version.txt
+    scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
